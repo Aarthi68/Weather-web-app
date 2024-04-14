@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <h2 id="title">Weather App</h2>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="enter city name"
+            spellcheck="false">
+            <button><img src="./images/search.png" alt="Search Icon"></button>
+        </div>
+        <div class="weather">
+            <img src="./images/rain.png" alt="" class="weather-icon"> 
+            <h1 class="temp">22°C</h1>
+            <h2 class="city">Korea</h2>
+            <div class="det">
+                <div class="col">
+                    <img src="./images/humidity.png" alt="">
+                    <div> 
+                        <p class="humi">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+                <div class="col">
+                    <img src="./images/wind.png" alt="">
+                    <div>
+                        <p class="wind">15 km/h</p>
+                        <p>wind speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const apiKey="94e9f03bd682dbbc23d7b0c8c18ce112";
+        const apiUrl="https://api.openweathermap.org/data/2.5/weather?&units=metric";
+        const searchBox=document.querySelector(".search input");
+        const searchBtn=document.querySelector(".search button");
+        const weatherIcon=document.querySelector(".weather-icon");
+        async function checkWeather(city){
+            const url = `${apiUrl}&q=${encodeURIComponent(city)}&appid=${apiKey}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                console.log(data);
+                // Check if the city was found; the API returns a 404 status code if not
+                if (data.cod !== 200) {
+                    alert("City not found.");
+                    return;
+                }
+                document.querySelector(".city").innerHTML = data.name;
+                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+                document.querySelector(".humi").innerHTML = data.main.humidity + "%";
+                document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+                if(data.weather[0].main=="Clouds"){
+                    weatherIcon.src="./images/clouds.png";
+                }
+                else if(data.weather[0].main=="Clear"){
+                    weatherIcon.src="./images/clear.png";
+                }
+                else if(data.weather[0].main=="Drizzle"){
+                    weatherIcon.src="./images/drizzle.png";
+                }
+                else if(data.weather[0].main=="Rain"){
+                    weatherIcon.src="./images/rain.png";
+                }
+                else if(data.weather[0].main=="Mist"){
+                    weatherIcon.src="./images/mist.png";
+                }
+                else if(data.weather[0].main=="Snow"){
+                    weatherIcon.src="./images/snow.png";
+                }
+                document.querySelector(".weather").style.display="block";
+            } 
+            catch (error) {
+                console.error("Failed to fetch weather data:", error);
+                alert("Failed to fetch weather data.");
+            }
+        }
+        searchBtn.addEventListener("click",()=>{
+            checkWeather(searchBox.value);
+        }) 
+        
+    </script>
+    <img src="." alt="">
+</body>
+</html>
+<!-- https://api.openweathermap.org/data/2.5/weather?q=Korea&appid=94e9f03bd682dbbc23d7b0c8c18ce112&units=metric -->
